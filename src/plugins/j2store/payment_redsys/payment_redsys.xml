@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="j2store" method="upgrade">
+	<name>Redsys Redsys payment gateway for J2Store</name>
+	<version>1.16</version>
+	<creationDate>MAR 2019</creationDate>
+	<author>J2Store</author>
+	<authorEmail>support@j2store.org</authorEmail>
+	<authorUrl>http://www.j2store.org</authorUrl>
+	<copyright>2019 Weblogicx India Private Limited</copyright>
+	<license>GNU General Public License v3 or later versions</license>
+	<description>J2COMMERCE_REDSYS_PLUGINDESC</description>
+	<scriptfile>script.payment_redsys.php</scriptfile>
+	<files>
+		<filename plugin="payment_redsys">payment_redsys.php</filename>
+		<filename>index.html</filename>
+		<folder>payment_redsys</folder>
+		<filename>redsysv2.php</filename>
+		<filename>redsysv3.php</filename>
+		<folder>redsys</folder>
+		<folder>library</folder>
+		<folder>languages</folder>
+	</files>
+
+	<languages>
+		<language tag="en-GB">languages/en-GB.plg_j2store_payment_redsys.ini
+		</language>
+		<language tag="en-GB">languages/en-GB.plg_j2store_payment_redsys.sys.ini
+		</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="display_name" type="text" size="30" default=""
+					label="j2store_plugin_display_name" description="j2store_plugin_display_name_desc" />
+				<field name="display_image" type="media"
+					label="j2store_plugin_display_image" description="j2store_plugin_display_image_desc" />
+				<field name="redsys_title" type="text" size="50" default=""
+					label="j2store_redsys_title" description="j2store_redsys_title_desc" />
+				<field name="redsys_merchant_code" type="text" size="50"
+					default="" label="j2store_redsys_merchant_code" description="j2store_redsys_merchant_code_desc" />
+				<field name="redsys_merchant_signature" type="text" size="50"
+					default="" label="j2store_redsys_merchant_signature" description="j2store_redsys_merchant_signature_desc" />
+				<field name="redsys_merchant_terminal" type="text" size="50"
+					default="" label="j2store_redsys_merchant_terminal" description="j2store_redsys_merchant_terminal_desc" />
+				
+				<field name="live_server" type="radio" default="0"
+					label="j2store_redsys_live_server" description="j2store_redsys_live_server_desc">
+					<option value="0">sis</option>
+					<option value="1">sis-i</option>
+				</field>	
+				
+				<field name="redsys_encryption_method" type="list" default="sha1-enhanced"
+					label="j2store_redsys_encryption_method" description="j2store_redsys_encryption_method_desc">
+					<option value="sha1">sha1</option>
+					<option value="sha1-enhanced">sha1-enhanced</option>
+					<option value="HMAC_SHA256_V1">HMAC_SHA256_V1</option>
+					
+				</field>
+				<field type="spacer" />
+				<field name="sandbox" type="radio" default="0"
+					label="j2store_use_sandbox" description="j2store_use_sandbox_desc">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+				<field name="test_server" type="radio" default="0"
+					label="j2store_redsys_test_server" description="j2store_redsys_test_server_desc">
+					<option value="0">sis-t</option>
+					<option value="1">sis-d</option>
+				</field>
+
+				<field name="redsys_prefix_order" type="text" size="50"
+					   default="" label="j2store_redsys_prefix_order" description="j2store_redsys_prefix_order_desc" />
+
+				<field name="redsys_currency" type="list" default="978"
+					label="j2store_redsys_currency" description="j2store_redsys_currency_desc">
+					<option value='978'>Euro</option>
+					<option value='840'>U.S. Dollar</option>
+					<option value='826'>Pound</option>
+					<option value='392'>Yen</option>
+					<option value='032'>Southern Argentina</option>
+					<option value='124'>Canadian Dollar</option>
+					<option value='152'>Chilean Peso</option>
+					<option value='170'>Colombian Peso</option>
+					<option value='356'>India Rupee</option>
+					<option value='484'>New Mexican Peso</option>
+					<option value='604'>Soles</option>
+					<option value='756'>Swiss Franc</option>
+					<option value='986'>Brazilian Real</option>
+					<option value='937'>Bolivar</option>
+					<option value='949'>Turkish lira</option>
+				</field>
+
+				<field name="redsys_language" type="list" default="001"
+					label="j2store_redsys_language" description="j2store_redsys_language_desc">
+					<option value='001'>Spanish</option>
+					<option value='002'>English</option>
+					<option value='003'>Catalan</option>
+					<option value='004'>French</option>
+					<option value='005'>German</option>
+					<option value='006'>Dutch</option>
+					<option value='007'>Italian</option>
+					<option value='008'>Swedish</option>
+					<option value='009'>Portuguese</option>
+					<option value='010'>Valenciano</option>
+					<option value='011'>Polish</option>
+					<option value='012'>Gallego</option>
+					<option value='013'>Euskera</option>
+				</field>
+
+				<field name="redsys_transactiontype" type="list" default="1"
+					label="j2store_redsys_transaction_type" description="j2store_redsys_transaction_type_desc">
+					<option value='0'>Authorization</option>
+					<option value='1'>Pre-authorization</option>
+				</field>
+
+				<field type="spacer" />
+				<field name="articleid" type="text" size="10" default=""
+					label="j2store_thanks_msg" description="j2store_thanks_msg_desc" />
+				<field type="spacer" />
+				<field name="onselection" type="textarea" cols="10" rows="5"
+					default="J2COMMERCE_PAYMENT_STANDARD_FORM_MESSAGE" label="j2store_on_selection_label"
+					description="j2store_on_selection_desc" />
+				<field name="onbeforepayment" type="textarea" cols="10" rows="5"
+					default="J2COMMERCE_PAYMENT_STANDARD_PREPARATION_MESSAGE" label="j2store_on_before_payment_label"
+					description="j2store_on_before_payment_desc" />
+				<field name="onafterpayment" type="textarea" cols="10" rows="5"
+					default="J2COMMERCE_PAYMENT_ACCEPTED_FOR_VALIDATION" label="j2store_on_after_payment_label"
+					description="j2store_on_after_payment_desc" />
+				<field name="onerrorpayment" type="textarea" cols="10" rows="5"
+					default="J2COMMERCE_PAYMENT_INVALID_ACTION" label="j2store_on_error_payment_label"
+					description="j2store_on_error_payment_desc" />
+				<field name="oncancelpayment" type="textarea" cols="10" rows="5"
+					default="J2COMMERCE_PAYMENT_CANCEL" label="j2store_on_cancel_payment_label"
+					description="j2store_on_cancel_payment_desc" />
+
+				<field type="spacer" />
+
+				<field name="button_text" type="text" size="50"
+					default="J2COMMERCE_PLACE_ORDER" label="j2store_button_text_label"
+					description="j2store_button_text_desc" />
+				<field name="debug" type="radio" default="0" label="j2store_debug"
+					description="j2store_debug_desc">
+					<option value="0">No</option>
+					<option value="1">Yes</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
