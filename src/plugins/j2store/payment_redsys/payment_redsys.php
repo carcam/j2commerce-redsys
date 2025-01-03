@@ -52,7 +52,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 		$this->merchant_signature = trim($this->params->get('redsys_merchant_signature', ''));
 		$this->payment_page_title  = trim($this->params->get('redsys_title', ''));
 		$this->environment  = $this->params->get('sandbox', 0) ? 'test' : 'live';
-		$this->encryption_method = $this->params->get('redsys_encryption_method', 'sha1');
+		$this->encryption_method = 'HMAC_SHA256_V1';
 		$this->_isLog = $this->params->get('debug', 0);
 	}
 
@@ -156,21 +156,10 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	{
 		$mode = $this->params->get('sandbox', 0);
 		if ($mode) {
-			$server = $this->params->get('test_server', 0);
-			if ($server) {
-				return "http://sis-d.redsys.es/sis/realizarPago/utf-8";
-			} else {
-				return "https://sis-t.redsys.es:25443/sis/realizarPago/utf-8";
-			}
+			return "https://sis-t.redsys.es:25443/sis/realizarPago";
 		} else {
-			$server = $this->params->get('live_server', 0);
-			if ($server) {
-				return "https://sis-i.redsys.es:25443/sis/realizarPago/utf-8";
-			} else {
-				return "https://sis.redsys.es/sis/realizarPago/utf-8";
-			}
+			return "https://sis.redsys.es/sis/realizarPago";
 		}
-		//return $this->params->get('sandbox', 0)? "http://sis-d.redsys.es/sis/realizarPago":"https://sis-i.redsys.es:25443/sis/realizarPago";//'test':'live';
 	}
 	/**
 	 * Processes the payment form
