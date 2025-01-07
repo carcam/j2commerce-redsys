@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="j2store" method="upgrade">
-	<name>Redsys Redsys payment gateway for J2Store</name>
-	<version>1.16</version>
-	<creationDate>MAR 2019</creationDate>
-	<author>J2Store</author>
+	<name>Redsys payment gateway for J2Store</name>
+	<version>2.0.0</version>
+	<creationDate>January 2025</creationDate>
+	<author><![CDATA[Carlos Cámara]]></author>
 	<authorEmail>support@j2store.org</authorEmail>
 	<authorUrl>http://www.j2store.org</authorUrl>
 	<copyright>2019 Weblogicx India Private Limited</copyright>
@@ -14,11 +14,9 @@
 		<filename plugin="payment_redsys">payment_redsys.php</filename>
 		<filename>index.html</filename>
 		<folder>payment_redsys</folder>
-		<filename>redsysv2.php</filename>
-		<filename>redsysv3.php</filename>
 		<folder>redsys</folder>
 		<folder>library</folder>
-		<folder>languages</folder>
+		<folder>language</folder>
 	</files>
 
 	<languages>
@@ -31,22 +29,22 @@
 		<fields name="params">
 			<fieldset name="basic">
 				<field name="display_name" type="text" size="30" default=""
-					label="J2STORE_PLUGIN_DISPLAY_NAME"
-					description="J2STORE_PLUGIN_DISPLAY_NAME_DESC" />
+					label="J2COMMERCE_PLUGIN_DISPLAY_NAME"
+					description="J2COMMERCE_PLUGIN_DISPLAY_NAME_DESC" />
 				<field name="display_image" type="media"
-					label="J2STORE_PLUGIN_DISPLAY_IMAGE"
-					description="J2STORE_PLUGIN_DISPLAY_IMAGE_DESC" />
+					label="J2COMMERCE_PLUGIN_DISPLAY_IMAGE"
+					description="J2COMMERCE_PLUGIN_DISPLAY_IMAGE_DESC" />
 				<field name="redsys_title" type="text" size="50" default=""
-					label="J2STORE_REDSYS_TITLE" description="J2STORE_REDSYS_TITLE_DESC" />
+					label="J2COMMERCE_REDSYS_TITLE" description="J2COMMERCE_REDSYS_TITLE_DESC" />
 				<field name="redsys_merchant_code" type="text" size="50"
-					default="" label="J2STORE_REDSYS_MERCHANT_CODE"
-					description="J2STORE_REDSYS_MERCHANT_CODE_DESC" />
+					default="" label="J2COMMERCE_REDSYS_MERCHANT_CODE"
+					description="J2COMMERCE_REDSYS_MERCHANT_CODE_DESC" />
 				<field name="redsys_merchant_signature" type="text" size="50"
-					default="" label="J2STORE_REDSYS_MERCHANT_SIGNATURE"
-					description="J2STORE_REDSYS_MERCHANT_SIGNATURE_DESC" />
+					default="" label="J2COMMERCE_REDSYS_MERCHANT_SIGNATURE"
+					description="J2COMMERCE_REDSYS_MERCHANT_SIGNATURE_DESC" />
 				<field name="redsys_merchant_terminal" type="text" size="50"
-					default="" label="J2STORE_REDSYS_MERCHANT_TERMINAL"
-					description="J2STORE_REDSYS_MERCHANT_TERMINAL_DESC" />
+					default="" label="J2COMMERCE_REDSYS_MERCHANT_TERMINAL"
+					description="J2COMMERCE_REDSYS_MERCHANT_TERMINAL_DESC" />
 
 				<field type="spacer" />
 				<field name="sandbox" type="radio" default="0"
@@ -56,11 +54,11 @@
 				</field>
 
 				<field name="redsys_prefix_order" type="text" size="50"
-					default="" label="J2STORE_REDSYS_PREFIX_ORDER"
-					description="J2STORE_REDSYS_PREFIX_ORDER_DESC" />
+					default="" label="J2COMMERCE_REDSYS_PREFIX_ORDER"
+					description="J2COMMERCE_REDSYS_PREFIX_ORDER_DESC" />
 
 				<field name="redsys_currency" type="list" default="978"
-					label="J2STORE_REDSYS_CURRENCY" description="J2STORE_REDSYS_CURRENCY_DESC">
+					label="J2COMMERCE_REDSYS_CURRENCY" description="J2COMMERCE_REDSYS_CURRENCY_DESC">
 					<option value='978'>Euro</option>
 					<option value='840'>U.S. Dollar</option>
 					<option value='826'>Pound</option>
@@ -79,7 +77,7 @@
 				</field>
 
 				<field name="redsys_language" type="list" default="001"
-					label="J2STORE_REDSYS_LANGUAGE" description="J2STORE_REDSYS_LANGUAGE_DESC">
+					label="J2COMMERCE_REDSYS_LANGUAGE" description="J2COMMERCE_REDSYS_LANGUAGE_DESC">
 					<option value='000'>Default</option>
 					<option value='001'>Spanish</option>
 					<option value='002'>English</option>
@@ -97,43 +95,43 @@
 				</field>
 
 				<field name="redsys_transactiontype" type="list" default="1"
-					label="J2STORE_REDSYS_TRANSACTION_TYPE"
-					description="J2STORE_REDSYS_TRANSACTION_TYPE_DESC">
+					label="J2COMMERCE_REDSYS_TRANSACTION_TYPE"
+					description="J2COMMERCE_REDSYS_TRANSACTION_TYPE_DESC">
 					<option value='0'>Authorization</option>
 					<option value='1'>Pre-authorization</option>
 				</field>
 
 				<field type="spacer" />
 				<field name="articleid" type="text" size="10" default=""
-					label="J2STORE_THANKS_MSG" description="J2STORE_THANKS_MSG_DESC" />
+					label="J2COMMERCE_THANKS_MSG" description="J2COMMERCE_THANKS_MSG_DESC" />
 				<field type="spacer" />
 				<field name="onselection" type="textarea" cols="10" rows="5"
 					default="J2COMMERCE_PAYMENT_STANDARD_FORM_MESSAGE"
-					label="J2STORE_ON_SELECTION_LABEL"
-					description="J2STORE_ON_SELECTION_DESC" />
+					label="J2COMMERCE_ON_SELECTION_LABEL"
+					description="J2COMMERCE_ON_SELECTION_DESC" />
 				<field name="onbeforepayment" type="textarea" cols="10" rows="5"
 					default="J2COMMERCE_PAYMENT_STANDARD_PREPARATION_MESSAGE"
-					label="J2STORE_ON_BEFORE_PAYMENT_LABEL"
+					label="J2COMMERCE_ON_BEFORE_PAYMENT_LABEL"
 					description="j2store_on_before_payment_desc" />
 				<field name="onafterpayment" type="textarea" cols="10" rows="5"
 					default="J2COMMERCE_PAYMENT_ACCEPTED_FOR_VALIDATION"
-					label="J2STORE_ON_AFTER_PAYMENT_LABEL"
-					description="J2STORE_ON_AFTER_PAYMENT_DESC" />
+					label="J2COMMERCE_ON_AFTER_PAYMENT_LABEL"
+					description="J2COMMERCE_ON_AFTER_PAYMENT_DESC" />
 				<field name="onerrorpayment" type="textarea" cols="10" rows="5"
 					default="J2COMMERCE_PAYMENT_INVALID_ACTION"
-					label="J2STORE_ON_ERROR_PAYMENT_LABEL"
-					description="J2STORE_ON_ERROR_PAYMENT_DESC" />
+					label="J2COMMERCE_ON_ERROR_PAYMENT_LABEL"
+					description="J2COMMERCE_ON_ERROR_PAYMENT_DESC" />
 				<field name="oncancelpayment" type="textarea" cols="10" rows="5"
-					default="J2COMMERCE_PAYMENT_CANCEL" label="J2STORE_ON_CANCEL_PAYMENT_LABEL"
-					description="J2STORE_ON_CANCEL_PAYMENT_DESC" />
+					default="J2COMMERCE_PAYMENT_CANCEL" label="J2COMMERCE_ON_CANCEL_PAYMENT_LABEL"
+					description="J2COMMERCE_ON_CANCEL_PAYMENT_DESC" />
 
 				<field type="spacer" />
 
 				<field name="button_text" type="text" size="50"
-					default="J2COMMERCE_PLACE_ORDER" label="J2STORE_BUTTON_TEXT_LABEL"
-					description="J2STORE_BUTTON_TEXT_DESC" />
-				<field name="debug" type="radio" default="0" label="J2STORE_DEBUG"
-					description="J2STORE_DEBUG_DESC">
+					default="J2COMMERCE_PLACE_ORDER" label="J2COMMERCE_BUTTON_TEXT_LABEL"
+					description="J2COMMERCE_BUTTON_TEXT_DESC" />
+				<field name="debug" type="radio" default="0" label="J2COMMERCE_DEBUG"
+					description="J2COMMERCE_DEBUG_DESC">
 					<option value="0">No</option>
 					<option value="1">Yes</option>
 				</field>
