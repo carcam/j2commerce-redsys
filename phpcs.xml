@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="joomla standard">
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+	    <exclude-pattern type="relative">src</exclude-pattern>
+	</rule>
+    <rule ref="PSR12.Files.LineLength">
+	    <exclude-pattern type="relative">src/component/site/tmpl</exclude-pattern>
+	    <exclude-pattern type="relative">src/templates/template/index.php</exclude-pattern>
+	</rule>
+	<rule ref="PSR12">
+		<properties>
+			<property name="shortArraySyntax" value="true"/>
+		</properties>
+	</rule>
+</ruleset>
