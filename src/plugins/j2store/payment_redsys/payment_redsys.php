@@ -8,11 +8,8 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once(JPATH_ADMINISTRATOR . '/components/com_j2store/library/plugins/payment.php');
 
-if (version_compare(PHP_VERSION, 7.0, '<')) {
-	include JPATH_SITE . '/plugins/j2store/payment_redsys/library/apiRedsys.php';
-} else {
-	include JPATH_SITE . '/plugins/j2store/payment_redsys/library/apiRedsys_7.php';
-}
+include JPATH_SITE . '/plugins/j2store/payment_redsys/library/apiRedsys_7.php';
+
 class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 {
 
@@ -442,7 +439,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 		$currency_value = $order->currency_value;
 		$currencies = $this->getAcceptedCurrencies();
 		$currencyObject = J2Store::currency();
-		if (isset($currencies[$order->currency_code]) && JString::strlen($currencies[$order->currency_code]) > 1) {
+		if (isset($currencies[$order->currency_code]) && strlen($currencies[$order->currency_code]) > 1) {
 			$currency_number = $currencies[$order->currency_code];
 		} else {
 			$default_currency = $this->params->get('redsys_currency', '978');
