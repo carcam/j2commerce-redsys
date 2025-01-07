@@ -16,7 +16,7 @@ class plgJ2StorePayment_redsysInstallerScript
 		}
 		$version_file = JPATH_ADMINISTRATOR . '/components/com_j2store/version.php';
 
-		if (File::exists($version_file)) {
+		if (file_exists($version_file)) {
 			require_once($version_file);
 			// abort if the current J2Store release is older
 			if (version_compare(J2STORE_VERSION, '4.0.10', 'lt')) {
