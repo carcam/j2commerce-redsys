@@ -2,13 +2,16 @@
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Database\DatabaseInterface;
 
 defined('_JEXEC') or die('Restricted access');
 
 require_once(JPATH_ADMINISTRATOR . '/components/com_j2store/library/plugins/payment.php');
 
-include JPATH_SITE . '/plugins/j2store/payment_redsys/library/apiRedsys_7.php';
+include JPATH_SITE . '/plugins/j2store/payment_redsys/library/apiRedsys.php';
 
 class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 {
@@ -77,7 +80,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 		$vars->orderpayment_type = $this->_element;
 		$vars->onbeforepayment_text = $this->params->get('onbeforepayment', '');
 		$vars->onerrorpayment_text = $this->params->get('onerrorpayment', '');
-		$vars->button_text = $this->params->get('button_text', 'J2STORE_PLACE_ORDER');
+		$vars->button_text = $this->params->get('button_text', 'J2COMMERCE_PLACE_ORDER');
 
 		$url_ok = Uri::root() . "index.php?option=com_j2store&view=checkout&task=confirmPayment&orderpayment_type=" . $this->_element . "&paction=display_message";
 		$url_ko = Uri::root() . "index.php?option=com_j2store&view=checkout&task=confirmPayment&orderpayment_type=" . $this->_element . "&paction=cancel";
@@ -97,53 +100,29 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 		$order_id_for_sermpa = $this->params->get('redsys_prefix_order', '') . '' . $vars->orderpayment_id;
 		$consumer_language = $this->params->get('redsys_language', '001');
 		$transaction_type = $this->params->get('redsys_transactiontype', '1');
-		if ($this->encryption_method != "HMAC_SHA256_V1") {
-			require_once(JPath::clean(dirname(__FILE__) . "/redsys/Redsys.php"));
-			$redsys = new Redsys($this->payment_page_title, $this->merchant_code, $this->merchant_terminal, $this->merchant_signature, $this->environment, $this->encryption_method);
 
-			$redsys->setAmount($amount)
-				->setCurrency($currency_values['currency_number'])
-				->setOrder(strval($order_id_for_sermpa))
-				->setProductDescription(Text::_('J2STORE_ORDER_DESCRIPTION') . ':' . $vars->orderpayment_id)
-				->setConsumerLanguage($consumer_language)
-				->setMerchantData($vars->order_id)
-				->setTransactionType($transaction_type)
-				->setMerchantURL($merchant_url)
-				->setUrlOK($url_ok)
-				->setUrlKO($url_ko);
-			$vars->post_url = $redsys->getEnvironment();
-			try {
-				$vars->fields = $redsys->getFields();
-			} catch (RedsysException $e) {
-				$html =  $vars->onerrorpayment_text;
-			}
-		} else {
+		$miObj = new RedsysAPI;
+		$miObj->setParameter("DS_MERCHANT_AMOUNT", (string)$amount);
+		$miObj->setParameter("DS_MERCHANT_ORDER", strval($order_id_for_sermpa));
+		$miObj->setParameter("DS_MERCHANT_MERCHANTCODE", $this->merchant_code);
+		$miObj->setParameter("DS_MERCHANT_CURRENCY", $currency_values['currency_number']); //$currency_values['currency_number']
+		$miObj->setParameter("DS_MERCHANT_TRANSACTIONTYPE", $transaction_type);
+		$miObj->setParameter("DS_MERCHANT_TERMINAL", $this->merchant_terminal);
+		$miObj->setParameter("DS_MERCHANT_MERCHANTURL", $merchant_url);
+		$miObj->setParameter("DS_MERCHANT_URLOK", $url_ok); //$url_ok
+		$miObj->setParameter("DS_MERCHANT_URLKO", $url_ko); //$url_ko
+		$miObj->setParameter("Ds_Merchant_MerchantData", $vars->order_id); //$url_ko
 
-			$miObj = new RedsysAPI;
-			$miObj->setParameter("DS_MERCHANT_AMOUNT", (string)$amount);
-			$miObj->setParameter("DS_MERCHANT_ORDER", strval($order_id_for_sermpa));
-			$miObj->setParameter("DS_MERCHANT_MERCHANTCODE", $this->merchant_code);
-			$miObj->setParameter("DS_MERCHANT_CURRENCY", $currency_values['currency_number']); //$currency_values['currency_number']
-			$miObj->setParameter("DS_MERCHANT_TRANSACTIONTYPE", $transaction_type);
-			$miObj->setParameter("DS_MERCHANT_TERMINAL", $this->merchant_terminal);
-			$miObj->setParameter("DS_MERCHANT_MERCHANTURL", $merchant_url);
-			$miObj->setParameter("DS_MERCHANT_URLOK", $url_ok); //$url_ok
-			$miObj->setParameter("DS_MERCHANT_URLKO", $url_ko); //$url_ko
-			$miObj->setParameter("Ds_Merchant_MerchantData", $vars->order_id); //$url_ko
-
-			//$vars->version = $this->encryption_method;//"HMAC_SHA256_V1";
-			//echo "<pre>";print_r($miObj->vars_pay);exit;
-			$kc = $this->merchant_signature; //'Mk9m98IfEblmPfrpsawt7BmxObt98Jev';
-			$params = $miObj->createMerchantParameters();
-			$signature = $miObj->createMerchantSignature($kc);
-			$vars->post_url = $this->getPostUrl();
-			$fields = array(
-				'Ds_SignatureVersion' => $this->encryption_method,
-				'Ds_MerchantParameters' => $params,
-				'Ds_Signature' => $signature
-			);
-			$vars->fields = $fields;
-		}
+		$kc = $this->merchant_signature;
+		$params = $miObj->createMerchantParameters();
+		$signature = $miObj->createMerchantSignature($kc);
+		$vars->post_url = $this->getPostUrl();
+		$fields = array(
+			'Ds_SignatureVersion' => $this->encryption_method,
+			'Ds_MerchantParameters' => $params,
+			'Ds_Signature' => $signature
+		);
+		$vars->fields = $fields;
 
 		$html = $this->_getLayout('prepayment', $vars);
 		return $html;
@@ -171,11 +150,11 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 		// Process the payment
 		$app = Factory::getApplication();
 		$paction = $app->input->getString('paction');
-		$vars = new JObject();
+		$vars = new \stdClass();
 		switch ($paction) {
 			case "display_message":
-				$session = Factory::getSession();
-				$session->set('j2store_cart', array());
+				$session = Factory::getApplication()->getSession();
+				$session->set('j2store_cart', []);
 				$vars->message = Text::_($this->params->get('onafterpayment', ''));
 				$html = $this->_getLayout('message', $vars);
 				$html .= $this->_displayArticle();
@@ -207,7 +186,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	 */
 	function _renderForm($data)
 	{
-		$user = Factory::getUser();
+		$user = Factory::getApplication()->getIdentity();
 		$vars = new \stdClass();
 		$vars->onselection_text = $this->params->get('onselection', '');
 		$html = $this->_getLayout('form', $vars);
@@ -251,9 +230,9 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	function _process()
 	{
 		$app = Factory::getApplication();
-		$data = array();
-		$response = array();
-		$errors = array();
+		$data = [];
+		$response = [];
+		$errors = [];
 		if ($this->encryption_method != "HMAC_SHA256_V1") {
 			$data = $app->input->getArray($_REQUEST);
 			//get the raw post
@@ -296,7 +275,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 					if ($data['Ds_MerchantCode'] != $this->merchant_code) {
 						//set order status failed
 						$order->update_status(3);
-						$errors[] = Text::_('J2STORE_REDSYS_ERROR_MERCHANT_CODE_MISMATCH');
+						$errors[] = Text::_('J2COMMERCE_REDSYS_ERROR_MERCHANT_CODE_MISMATCH');
 					}
 					//no errors, go ahead and check the feedback
 					if (count($errors) < 1) {
@@ -311,7 +290,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 							if ((int) $data['Ds_Response'] == 9915) {
 								$order->update_status(6);
 							}
-						} catch (RedsysException $e) {
+						} catch (\Exception $e) {
 							// Transaction no valid. Save your data here.
 							$errors[] = $e;
 							//set order status failed
@@ -335,25 +314,21 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 					//clear cart
 					$order->empty_cart();
 				} else {
-					$errors[] = Text::_('J2STORE_REDSYS_ERROR_INVALID_ORDERPAYMENTID');
+					$errors[] = Text::_('J2COMMERCE_REDSYS_ERROR_INVALID_ORDERPAYMENTID');
 				}
 			}
-		} catch (RedsysException $e) {
+		} catch (Exception $e) {
 			$errors[] = $e;
 		}
 
 		if (count($errors)) {
-			$config = Factory::getConfig();
-			if (version_compare(JVERSION, '3.0', 'ge')) {
-				$sitename = $config->get('sitename');
-			} else {
-				$sitename = $config->getValue('config.sitename');
-			}
+			$config = Factory::getApplication()->getConfig();
+			$sitename = $config->get('sitename');
 
 			$error = implode('/n', $errors);
 			//send error notification to the administrators
-			$subject = Text::sprintf('J2STORE_REDSYS_EMAIL_PAYMENT_NOT_VALIDATED_SUBJECT', $sitename);
-			$body = Text::sprintf('J2STORE_REDSYS_EMAIL_PAYMENT_FAILED_BODY', 'Administrator', $sitename, Uri::root(), $error, $transaction_details);
+			$subject = Text::sprintf('J2COMMERCE_REDSYS_EMAIL_PAYMENT_NOT_VALIDATED_SUBJECT', $sitename);
+			$body = Text::sprintf('J2COMMERCE_REDSYS_EMAIL_PAYMENT_FAILED_BODY', 'Administrator', $sitename, Uri::root(), $error, $transaction_details);
 			$receivers = $this->_getAdmins();
 			foreach ($receivers as $receiver) {
 				J2Store::email()->sendErrorEmails($receiver->email, $subject, $body);
@@ -373,7 +348,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	 */
 	function _getAdmins()
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get(DatabaseInterface::class);
 		$query = $db->getQuery(true);
 		$query->select('u.name,u.email');
 		$query->from('#__users AS u');
@@ -383,9 +358,9 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 
 		$db->setQuery($query);
 		$admins = $db->loadObjectList();
+
 		if ($error = $db->getErrorMsg()) {
-			JError::raiseError(500, $error);
-			return false;
+			throw new GenericDataException($error, 500);
 		}
 
 		return $admins;
@@ -401,7 +376,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	function _getFormattedTransactionDetails($data)
 	{
 		$separator = "\n";
-		$formatted = array();
+		$formatted = [];
 
 		foreach ($data as $key => $value) {
 			if ($key != 'view' && $key != 'layout') {
@@ -422,7 +397,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	function _log($text, $type = 'message')
 	{
 		if ($this->_isLog) {
-			$file = JPATH_ROOT . "/cache/{$this->_element}.log";
+			$file = JPATH_ROOT . "/administrator/logs/{$this->_element}.log";
 			$date = Factory::getDate();
 
 			$f = fopen($file, 'a');
@@ -434,7 +409,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	//get currency code, value, number
 	function getCurrency($order, $convert = false)
 	{
-		$results = array();
+		$results = [];
 		$currency_code = $order->currency_code;
 		$currency_value = $order->currency_value;
 		$currencies = $this->getAcceptedCurrencies();
@@ -465,7 +440,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	function getAcceptedCurrencies()
 	{
 
-		$currencies = array(
+		$currencies = [
 			'EUR' => '978',
 			'USD' => '840',
 			'GBP' => '826',
@@ -482,7 +457,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 			'VEF' => '937',
 			'TRY' => '949'
 
-		);
+		];
 
 		return $currencies;
 	}
