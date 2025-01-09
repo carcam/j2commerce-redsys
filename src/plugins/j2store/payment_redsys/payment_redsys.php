@@ -65,7 +65,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	{
 		$currency = J2Store::currency();
 		// prepare the payment form
-		$vars = new JObject();
+		$vars = new \stdClass();
 		$vars->order_id = $data['order_id'];
 		$vars->orderpayment_id = $data['orderpayment_id'];
 
