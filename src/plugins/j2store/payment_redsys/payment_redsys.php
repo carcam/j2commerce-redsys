@@ -1,16 +1,23 @@
 <?php
+/**
+ * @package     Joomla.Plugin
+ * @subpackage  J2Store.payment_redsys
+ *
+ * @copyright Copyright (C) 2019 J2Store All rights reserved.
+ * @copyright Copyright (C) 2025 Hepta Technologies SL. All rights reserved.
+ * @license https://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3 or later
+ * @website https://extensions.hepta.es
+ */
 
+/** ensure this file is being included by a parent file */
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Database\DatabaseInterface;
 
 defined('_JEXEC') or die('Restricted access');
-
 require_once(JPATH_ADMINISTRATOR . '/components/com_j2store/library/plugins/payment.php');
-
 include JPATH_SITE . '/plugins/j2store/payment_redsys/library/apiRedsys.php';
 
 class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
@@ -35,10 +42,6 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 	/**
 	 * Constructor
 	 *
-	 * For php4 compatability we must not use the __constructor as a constructor for plugins
-	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
-	 * This causes problems with cross-referencing necessary for the observer design pattern.
-	 *
 	 * @param object $subject The object to observe
 	 * @param 	array  $config  An array that holds the plugin configuration
 	 * @since 1.5
@@ -55,6 +58,13 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 		$this->encryption_method = 'HMAC_SHA256_V1';
 		$this->_isLog = $this->params->get('debug', 0);
 	}
+
+    function onJ2StoreIsJ2Store4($element){
+        if (!$this->_isMe($element)) {
+            return null;
+        }
+        return true;
+    }
 
 
 	/**
@@ -427,8 +437,8 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 				$currency_value = $currencyObject->getValue($code);
 				$convert = true;
 			}
-		}
-		$results['currency_number'] = $currency_number;
+	:wordwrap)	}
+		$lts['currency_number'] = $currency_number;
 		$results['currency_code'] = $currency_code;
 		$results['currency_value'] = $currency_value;
 		$results['convert'] = $convert;
