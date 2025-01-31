@@ -438,7 +438,7 @@ class PlgJ2StorePayment_redsys extends J2StorePaymentPlugin
 				$convert = true;
 			}
 	:wordwrap)	}
-		$lts['currency_number'] = $currency_number;
+		$results['currency_number'] = $currency_number;
 		$results['currency_code'] = $currency_code;
 		$results['currency_value'] = $currency_value;
 		$results['convert'] = $convert;
